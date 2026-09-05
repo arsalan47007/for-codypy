@@ -1,12 +1,72 @@
-{% extends "base.html" %}
+{% extends "checkins/base.html" %}
+{% load static %}
+
 {% block title %}درباره PulseCheck{% endblock %}
+
 {% block content %}
-<h1>درباره پروژه</h1>
-<p>PulseCheck یک پروژه کوچک اما واقعی برای یادگیری قدم‌به‌قدم Django است.</p>
-<ul>
-  <li>ثبت حال روزانه</li>
-  <li>ذخیره در دیتابیس</li>
-  <li>گزارش و فیلتر</li>
-  <li>مالکیت داده با کاربر</li>
-</ul>
+<div class="about-page">
+  <div class="card" style="max-width: 900px; margin: 0 auto;">
+    <div class="text-center">
+      <div style="font-size: 72px; margin-bottom: 12px;">💚</div>
+      <h1>درباره PulseCheck</h1>
+      <p style="font-size: 18px; margin: 12px auto 32px auto; max-width: 600px;">
+        ابزاری ساده و انسانی برای ثبت حال و احساسات کارمندان
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin: 32px 0;">
+      <div class="text-center" style="padding: 20px; background: var(--bg-light); border-radius: var(--radius-sm);">
+        <div style="font-size: 40px;">🎯</div>
+        <h4>هدف</h4>
+        <p class="text-small text-muted">ایجاد فضای امن برای ابراز احساسات کارمندان</p>
+      </div>
+      <div class="text-center" style="padding: 20px; background: var(--bg-light); border-radius: var(--radius-sm);">
+        <div style="font-size: 40px;">🔒</div>
+        <h4>حریم خصوصی</h4>
+        <p class="text-small text-muted">اطلاعات شما کاملاً محرمانه و شخصی است</p>
+      </div>
+      <div class="text-center" style="padding: 20px; background: var(--bg-light); border-radius: var(--radius-sm);">
+        <div style="font-size: 40px;">🤝</div>
+        <h4>حمایت</h4>
+        <p class="text-small text-muted">با هم تیم را قوی‌تر و آگاه‌تر کنیم</p>
+      </div>
+    </div>
+
+    <hr style="border: none; border-top: 2px solid var(--border); margin: 32px 0;">
+
+    <h3>✨ قابلیت‌های PulseCheck</h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0 32px 0;">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg-light); border-radius: var(--radius-sm);">
+        <span style="font-size: 20px;">✅</span> ثبت حال روزانه
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg-light); border-radius: var(--radius-sm);">
+        <span style="font-size: 20px;">✅</span> ذخیره در دیتابیس
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg-light); border-radius: var(--radius-sm);">
+        <span style="font-size: 20px;">✅</span> گزارش و فیلتر پیشرفته
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg-light); border-radius: var(--radius-sm);">
+        <span style="font-size: 20px;">✅</span> مالکیت داده با کاربر
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg-light); border-radius: var(--radius-sm);">
+        <span style="font-size: 20px;">✅</span> تحلیل روند احساسی
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg-light); border-radius: var(--radius-sm);">
+        <span style="font-size: 20px;">✅</span> رابط کاربری آرامش‌بخش
+      </div>
+    </div>
+
+    <div class="text-center mt-32" style="background: var(--bg-light); padding: 24px; border-radius: var(--radius-sm);">
+      <p style="font-size: 16px; font-weight: 500; color: var(--bg-dark);">
+        🌱 "مراقبت از حال درون، بهترین سرمایه‌گذاری برای فرداست."
+      </p>
+      <p class="text-muted text-small">— PulseCheck | نسخه ۱.۰</p>
+    </div>
+
+    <div class="text-center mt-32">
+      <a href="{% url 'checkins:check_in' %}" class="btn">😊 شروع ثبت حال</a>
+      <a href="{% url 'checkins:home' %}" class="btn btn-outline" style="margin-right: 12px;">🏠 بازگشت به خانه</a>
+    </div>
+  </div>
+</div>
 {% endblock %}

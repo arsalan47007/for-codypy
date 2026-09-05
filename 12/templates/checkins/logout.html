@@ -1,0 +1,74 @@
+{% extends "checkins/base.html" %}
+{% load static %}
+
+{% block title %}خروج از PulseCheck{% endblock %}
+
+{% block extra_css %}
+<style>
+  .logout-container {
+    max-width: 440px;
+    margin: 60px auto;
+  }
+  
+  .logout-card {
+    padding: 48px 36px;
+    text-align: center;
+  }
+  
+  .logout-card .logout-icon {
+    font-size: 72px;
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .logout-card h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  
+  .logout-card p {
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    font-size: 15px;
+    max-width: 100%;
+  }
+  
+  .logout-card .btn-group {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .logout-card .btn-group .btn {
+    min-width: 140px;
+  }
+  
+  @media (max-width: 480px) {
+    .logout-card {
+      padding: 32px 16px;
+    }
+    .logout-card .btn-group .btn {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="logout-container">
+  <div class="logout-card card">
+    <span class="logout-icon">👋</span>
+    <h1>خروج از حساب کاربری</h1>
+    <p>آیا مطمئن هستید که می‌خواهید از حساب خود خارج شوید؟</p>
+    
+    <div class="btn-group">
+      <form method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">🚪 بله، خروج</button>
+      </form>
+      <a href="{% url 'checkins:home' %}" class="btn btn-outline">🏠 نه، بازگشت</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

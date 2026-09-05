@@ -99,7 +99,12 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+# your_project/settings.py
 
+# مسیرهای لاگین و لاگ‌اوت
+LOGIN_URL = 'checkins:login'  # اسم کامل با namespace
+LOGIN_REDIRECT_URL = 'checkins:home'
+LOGOUT_REDIRECT_URL = 'checkins:home'
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/

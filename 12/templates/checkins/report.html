@@ -1,39 +1,349 @@
-{% extends "base.html" %}
+{% extends "checkins/base.html" %}
+{% load static %}
+
 {% block title %}گزارش PulseCheck{% endblock %}
-{% block content %}
-<h1>گزارش حال روزانه</h1>
-<form method="get" class="filters">
-  <label>فیلتر تاریخ
-    <input type="date" name="date" value="{{ selected_date }}">
-  </label>
-  <label class="checkbox">
-    <input type="checkbox" name="low" value="1" {% if low_only %}checked{% endif %}> فقط حال پایین
-  </label>
-  <button type="submit">اعمال فیلتر</button>
-  <a href="{% url 'report' %}">حذف فیلتر</a>
-</form>
 
-<section class="stats">
-  <div class="stat"><strong>{{ count }}</strong><span>تعداد ثبت‌ها</span></div>
-  <div class="stat"><strong>{% if avg_score %}{{ avg_score|floatformat:1 }}{% else %}-{% endif %}</strong><span>میانگین حال</span></div>
-</section>
+{% block extra_css %}
+<style>
+  /* استایل اختصاصی صفحه گزارش */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+  }
 
-{% if entries %}
-  <div class="entry-list">
-    {% for entry in entries %}
-      <article class="card">
-        <strong>حال: {{ entry.score }}/5</strong>
-        <span>برچسب: {{ entry.tag }}</span>
-        <p>{{ entry.reason|default:"بدون توضیح" }}</p>
-        <small>{{ entry.created_at|date:"Y-m-d H:i" }}</small>
-      </article>
-    {% endfor %}
-  </div>
-{% else %}
-  <p class="empty">هنوز داده‌ای برای نمایش وجود ندارد.</p>
-{% endif %}
+  .stat-card {
+    background: var(--card-bg);
+    border-radius: var(--radius-sm);
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    transition: var(--transition);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .stat-number {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--primary);
+    display: block;
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .stat-icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .filters-bar {
+    background: var(--card-bg);
+    border-radius: var(--radius-sm);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px;
+  }
+
+  .filters-bar .filter-group {
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .filters-bar label {
+    font-size: 13px;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  .filters-bar input[type="date"] {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .filters-bar .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 22px;
+  }
+
+  .filters-bar .checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary);
+  }
+
+  .filters-bar .checkbox-group label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .entry-list {
+    display: grid;
+    gap: 16px;
+  }
+
+  .entry-item {
+    background: var(--card-bg);
+    border-radius: var(--radius-sm);
+    padding: 20px 24px;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .entry-item:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow);
+  }
+
+  .entry-score {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .entry-score .score-badge {
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 18px;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .score-high {
+    background: #D1FAE5;
+    color: var(--primary);
+  }
+
+  .score-medium {
+    background: #FEF3C7;
+    color: #D97706;
+  }
+
+  .score-low {
+    background: #FEE2E2;
+    color: #DC2626;
+  }
+
+  .entry-tag {
+    background: var(--bg-light);
+    padding: 2px 14px;
+    border-radius: 50px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .entry-reason {
+    color: var(--text-muted);
+    font-size: 14px;
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .entry-date {
+    color: var(--text-light);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-state .empty-icon {
+    font-size: 64px;
+    display: block;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  .tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 16px;
+  }
+
+  .tag-filter .tag-btn {
+    padding: 4px 16px;
+    border-radius: 50px;
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    transition: var(--transition);
+    font-family: var(--font);
+  }
+
+  .tag-filter .tag-btn:hover,
+  .tag-filter .tag-btn.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  @media (max-width: 600px) {
+    .entry-item {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .filters-bar {
+      flex-direction: column;
+    }
+    .filters-bar .filter-group {
+      width: 100%;
+    }
+    .stat-number {
+      font-size: 28px;
+    }
+  }
+</style>
 {% endblock %}
 
-{% block footer%}
-<p>this is footer </p>
+{% block content %}
+<div class="report-page">
+  <div class="flex-between mb-32">
+    <div>
+      <h1>📊 گزارش حال روزانه</h1>
+      <p class="text-muted">مشاهده و تحلیل وضعیت احساسی شما در طول زمان</p>
+    </div>
+    <a href="/check-in/" class="btn btn-sm">➕ ثبت جدید</a>
+  </div>
+
+  <!-- فیلترها -->
+  <form method="get" class="filters-bar">
+    <div class="filter-group">
+      <label for="date">📅 فیلتر تاریخ</label>
+      <input type="date" name="date" id="date" value="{{ selected_date }}">
+    </div>
+    
+    <div class="filter-group">
+      <label>🏷️ فیلتر برچسب</label>
+      <div class="tag-filter">
+        <button type="button" class="tag-btn active" data-tag="">همه</button>
+        <button type="button" class="tag-btn" data-tag="خوشحال">😊 خوشحال</button>
+        <button type="button" class="tag-btn" data-tag="معمولی">😐 معمولی</button>
+        <button type="button" class="tag-btn" data-tag="خسته">😩 خسته</button>
+        <button type="button" class="tag-btn" data-tag="ناراحت">😢 ناراحت</button>
+      </div>
+      <input type="hidden" name="tag" id="tag-filter-input" value="">
+    </div>
+
+    <div class="checkbox-group">
+      <input type="checkbox" name="low" id="low" value="1" {% if low_only %}checked{% endif %}>
+      <label for="low">🔽 فقط حال پایین (کمتر از ۳)</label>
+    </div>
+
+    <div class="flex-center gap-8" style="padding-top: 22px;">
+      <button type="submit" class="btn btn-sm">🔍 اعمال فیلتر</button>
+      <a href="/report/" class="btn btn-sm btn-outline">🗑️ حذف فیلتر</a>
+    </div>
+  </form>
+
+  <!-- آمار -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-icon">📝</span>
+      <span class="stat-number">{{ count }}</span>
+      <span class="stat-label">تعداد ثبت‌ها</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">⭐</span>
+      <span class="stat-number">
+        {% if avg_score %}{{ avg_score|floatformat:1 }}{% else %}-{% endif %}
+      </span>
+      <span class="stat-label">میانگین حال (از ۵)</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🔥</span>
+      <span class="stat-number">{{ streak|default:0 }}</span>
+      <span class="stat-label">ثبت متوالی (روز)</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🏷️</span>
+      <span class="stat-number">{{ top_tag|default:"-" }}</span>
+      <span class="stat-label">برچسب بیشترین استفاده</span>
+    </div>
+  </div>
+
+  <!-- لیست ثبت‌ها -->
+  {% if entries %}
+    <div class="entry-list">
+      {% for entry in entries %}
+        <div class="entry-item">
+          <div class="entry-score">
+            <span class="score-badge 
+              {% if entry.score >= 4 %}score-high
+              {% elif entry.score >= 3 %}score-medium
+              {% else %}score-low{% endif %}">
+              {{ entry.score }}
+            </span>
+            <span class="entry-tag">{{ entry.tag|default:"بدون برچسب" }}</span>
+          </div>
+          <div class="entry-reason">
+            {% if entry.reason %}
+              <span>💬 "{{ entry.reason|truncatechars:50 }}"</span>
+            {% else %}
+              <span class="text-muted text-small">بدون توضیح</span>
+            {% endif %}
+          </div>
+          <span class="entry-date">🕐 {{ entry.created_at|date:"Y/m/d - H:i" }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card empty-state">
+      <span class="empty-icon">📭</span>
+      <h3>هنوز داده‌ای برای نمایش وجود ندارد</h3>
+      <p class="text-muted">اولین ثبت حال خود را امروز انجام دهید!</p>
+      <a href="/check-in/" class="btn mt-16">😊 ثبت حال امروز</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // فیلتر برچسب‌ها
+  const tagButtons = document.querySelectorAll('.tag-btn');
+  const tagInput = document.getElementById('tag-filter-input');
+  
+  tagButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      tagButtons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      tagInput.value = this.dataset.tag;
+      
+      // ارسال خودکار فرم
+      this.closest('form').submit();
+    });
+  });
+</script>
 {% endblock %}

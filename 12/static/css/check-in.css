@@ -1,0 +1,106 @@
+/* ==========================================
+   فایل: check-in.css
+   استایل اختصاصی صفحه ثبت حال
+   ========================================== */
+
+.mood-container {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.mood-card {
+  text-align: center;
+}
+
+.mood-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.mood-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 8px;
+  background: var(--bg-light);
+  border-radius: var(--radius-sm);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.mood-option:hover {
+  background: #D1FAE5;
+  transform: translateY(-2px);
+}
+
+.mood-option.active {
+  border-color: var(--primary);
+  background: #D1FAE5;
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.15);
+}
+
+.mood-option input[type="radio"] {
+  display: none;
+}
+
+.mood-emoji {
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.mood-label {
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 4px;
+  color: var(--text-dark);
+}
+
+/* تاریخچه */
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-item .date {
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.history-item .mood-label {
+  background: var(--bg-light);
+  padding: 2px 16px;
+  border-radius: 50px;
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.history-item .note-preview {
+  color: var(--text-muted);
+  font-size: 13px;
+  width: 100%;
+  padding-right: 12px;
+  border-right: 2px solid var(--border);
+}
+
+@media (max-width: 480px) {
+  .mood-options {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .mood-emoji {
+    font-size: 26px;
+  }
+}

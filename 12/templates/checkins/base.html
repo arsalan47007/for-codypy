@@ -1,0 +1,90 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}PulseCheck | ثبت حال کارمندان{% endblock %}</title>
+  
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <!-- ========== هدر ========== -->
+  <header class="site-header">
+    <strong>PulseCheck</strong>
+    <nav>
+      <a href="{% url 'checkins:home' %}" {% if request.path == '/' or request.path == '/home/' %}class="active"{% endif %}>🏠 خانه</a>
+      <a href="{% url 'checkins:check_in' %}" {% if 'check-in' in request.path or 'check_in' in request.path %}class="active"{% endif %}>😊 ثبت حال امروز</a>
+      <a href="{% url 'checkins:report' %}" {% if 'report' in request.path %}class="active"{% endif %}>📊 گزارش</a>
+      <a href="{% url 'checkins:about' %}" {% if 'about' in request.path %}class="active"{% endif %}>💚 درباره</a>
+    </nav>
+    <div class="auth-area">
+      {% if user.is_authenticated %}
+        👋 {{ user.first_name|default:user.username }}
+        <a href="{% url 'checkins:logout' %}" class="logout-btn">🚪 خروج</a>
+      {% else %}
+        <a href="{% url 'checkins:login' %}">🔐 ورود</a>
+        <span style="color: rgba(255,255,255,0.3);">|</span>
+        <a href="{% url 'checkins:register' %}">📝 ثبت‌نام</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- ========== پیام‌ها ========== -->
+  {% if messages %}
+    <div class="container" style="padding-top: 0; margin-top: -10px;">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- ========== محتوای اصلی ========== -->
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ========== فوتر ========== -->
+  <footer class="site-footer">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div style="text-align: right;">
+          <strong style="color: var(--bg-dark); font-size: 18px;">❤️ PulseCheck</strong>
+          <p style="font-size: 13px; margin-top: 4px; color: var(--text-muted);">ثبت حال کارمندان با آرامش و اعتماد</p>
+        </div>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+          <a href="{% url 'checkins:home' %}">خانه</a>
+          <a href="{% url 'checkins:about' %}">درباره</a>
+          <a href="#">حریم خصوصی</a>
+          <a href="#">تماس با ما</a>
+        </div>
+      </div>
+      <div style="border-top: 1px solid var(--border); margin-top: 20px; padding-top: 16px; text-align: center; font-size: 12px; opacity: 0.7; color: var(--text-muted);">
+        © {% now "Y" %} تمامی حقوق محفوظ است | ساخته شده با ❤️ برای محیط کار بهتر
+      </div>
+    </div>
+  </footer>
+
+  {% block extra_js %}{% endblock %}
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(function(alert) {
+        setTimeout(function() {
+          alert.style.transition = 'opacity 0.5s ease';
+          alert.style.opacity = '0';
+          setTimeout(function() {
+            alert.remove();
+          }, 500);
+        }, 5000);
+      });
+    });
+  </script>
+</body>
+</html>
