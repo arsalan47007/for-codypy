@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseCheck</title>
+    <style>
+        /* استایل کلی */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        /* کارت اصلی */
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 50px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        /* تیتر اصلی */
+        .main-title {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+
+        /* عنوان‌های بخش‌ها */
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3436;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            padding-right: 15px;
+            border-right: 5px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 28px;
+        }
+
+        /* پاراگراف */
+        .description {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #555;
+            background: #f8f9fa;
+            padding: 20px 25px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+
+        /* لیست‌ها */
+        .custom-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .custom-list li {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #2d3436;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .custom-list li:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateX(-5px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .custom-list li::before {
+            content: "✓";
+            font-weight: 900;
+            font-size: 18px;
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.15);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .custom-list li:hover::before {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+        }
+
+        /* بخش مناسب برای چه کسانی */
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .audience-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 18px 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .audience-item:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* منوی ناوبری */
+        .navbar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 600;
+            font-size: 16px;
+            padding: 8px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .navbar a.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        /* استایل ریسپانسیو */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+
+            .main-title {
+                font-size: 32px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+
+            .custom-list {
+                grid-template-columns: 1fr;
+            }
+
+            .audience-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- منوی ناوبری -->
+        <div class="navbar">
+          <a href="/">خانه</a>
+            <a href="/about/">درباره ما</a>
+        </div>
+
+        <!-- تیتر اصلی -->
+        <h1 class="main-title">PulseCheck</h1>
+        <p class="subtitle">✨ سیستم مدیریت حضور و غیاب هوشمند</p>
+
+        <!-- بخش PulseCheck چیست؟ -->
+        <h3 class="section-title">
+            <span class="icon">❓</span> PulseCheck چیست؟
+        </h3>
+        <p class="description">
+            سیستمی است برای مدیریت حضور و غیاب کارکنان به همراه قابلیت دریافت بازخورد از وضعیت روحی و عملکردی تیم.
+            این ابزار به مدیران کمک می‌کند تا در لحظه از وضعیت تیم خود مطلع شوند.
+        </p>
+
+        <!-- بخش چه مشکلی را حل می‌کند؟ -->
+        <h3 class="section-title">
+            <span class="icon">🛠️</span> چه مشکلی را حل می‌کند؟
+        </h3>
+        <ul class="custom-list">
+            <li>مدیریت دستی و کاغذی حضور و غیاب را حذف می‌کند</li>
+            <li>امکان ثبت و پیگیری بازخورد روزانه کارکنان را فراهم می‌سازد</li>
+            <li>به مدیران دید دقیق‌تری از وضعیت روحی و کاری تیم می‌دهد</li>
+            <li>فرآیندهای اداری را ساده و سریع‌تر می‌کند</li>
+            <li>گزارش‌های تحلیلی از عملکرد تیم ارائه می‌دهد</li>
+        </ul>
+
+        <!-- بخش امکانات آینده -->
+        <h3 class="section-title">
+            <span class="icon">🚀</span> امکانات آینده
+        </h3>
+        <ul class="custom-list">
+            <li>اتصال به سیستم‌های حقوق و دستمزد</li>
+            <li>پنل تحلیلات پیشرفته با نمودارهای گرافیکی</li>
+            <li>اپلیکیشن موبایل برای ثبت حضور از راه دور</li>
+            <li>امکان تعریف پروژه‌ها و تسک‌های روزانه</li>
+            <li>اعلان‌های هوشمند برای یادآوری ثبت وضعیت</li>
+            <li>امکان مشاهده گزارش‌های هفتگی و ماهانه</li>
+        </ul>
+
+        <!-- بخش برای چه کسانی مناسب است؟ -->
+        <h3 class="section-title">
+            <span class="icon">👥</span> برای چه کسانی مناسب است؟
+        </h3>
+        <div class="audience-grid">
+            <div class="audience-item">🏢 شرکت‌های کوچک و متوسط</div>
+            <div class="audience-item">💻 تیم‌های دورکار</div>
+            <div class="audience-item">👔 مدیران منابع انسانی</div>
+            <div class="audience-item">📈 کسب‌وکارهای در حال رشد</div>
+        </div>
+
+    </div>
+
+</body>
+</html>

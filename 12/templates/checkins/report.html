@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}گزارش PulseCheck{% endblock %}
+{% block content %}
+<h1>گزارش حال روزانه</h1>
+<form method="get" class="filters">
+  <label>فیلتر تاریخ
+    <input type="date" name="date" value="{{ selected_date }}">
+  </label>
+  <label class="checkbox">
+    <input type="checkbox" name="low" value="1" {% if low_only %}checked{% endif %}> فقط حال پایین
+  </label>
+  <button type="submit">اعمال فیلتر</button>
+  <a href="{% url 'report' %}">حذف فیلتر</a>
+</form>
+
+<section class="stats">
+  <div class="stat"><strong>{{ count }}</strong><span>تعداد ثبت‌ها</span></div>
+  <div class="stat"><strong>{% if avg_score %}{{ avg_score|floatformat:1 }}{% else %}-{% endif %}</strong><span>میانگین حال</span></div>
+</section>
+
+{% if entries %}
+  <div class="entry-list">
+    {% for entry in entries %}
+      <article class="card">
+        <strong>حال: {{ entry.score }}/5</strong>
+        <span>برچسب: {{ entry.tag }}</span>
+        <p>{{ entry.reason|default:"بدون توضیح" }}</p>
+        <small>{{ entry.created_at|date:"Y-m-d H:i" }}</small>
+      </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="empty">هنوز داده‌ای برای نمایش وجود ندارد.</p>
+{% endif %}
+{% endblock %}
+
+{% block footer%}
+<p>this is footer </p>
+{% endblock %}

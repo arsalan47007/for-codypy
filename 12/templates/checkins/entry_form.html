@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}ثبت حال امروز{% endblock %}
+{% block content %}
+<h1>ثبت حال امروز</h1>
+<form method="post" class="card form-card">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% for field in form %}
+    <label>
+      <span>{{ field.label }}</span>
+      {{ field }}
+      {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+      {% for error in field.errors %}<strong class="error">{{ error }}</strong>{% endfor %}
+    </label>
+  {% endfor %}
+  <button type="submit">ذخیره</button>
+</form>
+{% endblock %}
